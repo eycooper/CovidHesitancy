@@ -1,1 +1,1 @@
-# CovidHesitancy
+# Covid Hesitancy 
