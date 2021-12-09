@@ -50,6 +50,8 @@ _Christopher_
 \
 
 _Whole group:_
+\
+
 Combining data
 - Initial Analyses
 - Model Creation
