@@ -51,7 +51,7 @@ _Christopher_
 
 _Whole group:_
 
-Combining data
+- Combining data
 - Initial Analyses
 - Model Creation
 - Write-up
