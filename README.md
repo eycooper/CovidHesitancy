@@ -36,15 +36,19 @@ _Charlie_
 - Submitter
 - Git Leader
 \
+
 _Aishwarya_
 - Editor/Compiler
 \
+
 _Emma_
 - Model Validation
 \
+
 _Christopher_
 - Pre-Processing 
 \
+
 _Whole group:_
 Combining data
 - Initial Analyses
