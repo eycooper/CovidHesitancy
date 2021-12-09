@@ -233,7 +233,9 @@ print('% of Predictions within 0.01 of true value: ' + str(round(acc01, 3)))
 ```
 
 % of Predictions within 0.1 of true value: 0.988
+
 % of Predictions within 0.05 of true value: 0.862
+
 % of Predictions within 0.01 of true value: 0.273
 
 
