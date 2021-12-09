@@ -70,6 +70,9 @@ _Whole group:_
 - Write-up
 
 # Data Processing
+
+To begin, we loaded our data and created a processing function to run on the data which would handle NA's, improper data types, and consistency across the joined datasets. We used the following code to do so:
+
 ```{python}
 def convert(data):
     number = preprocessing.LabelEncoder()
@@ -95,6 +98,8 @@ by_state.head()
 
 # Intial Analyses
 
+After Processing, we began exploring relationships seen in the data.
+![image](https://user-images.githubusercontent.com/89169474/145312275-039029cb-da52-47d6-80c0-c1f5336696a6.png)
 
 
 # Results
