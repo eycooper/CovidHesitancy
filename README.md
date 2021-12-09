@@ -55,3 +55,15 @@ _Whole group:_
 - Initial Analyses
 - Model Creation
 - Write-up
+
+
+## Code Instructions
+First, run pip install block.
+
+Next, Connect Google Drive, load packages, and upload three files to your drive at the following folder:
+"/content/drive/MyDrive/DS5100/"
+
+(Two loaded to Github, one included in Google Drive link below):
+https://drive.google.com/file/d/1BQOnYJPyBJt9aukMuMSM2PAFodEx0l8V/view?usp=sharing
+
+After files are loaded to drive and packages are loaded, run all cells and view results!
