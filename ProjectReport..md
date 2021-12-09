@@ -98,31 +98,145 @@ by_state.head()
 
 # Intial Analyses
 
-After Processing, we began exploring relationships seen in the data.
+After Processing, we began exploring relationships seen in the data. First, we put together a Correlation Matrix to look at which variables were highly correlated. As most were not highly correlated, but also many were hovering around 0.5, we immediately realized this would have a large impact on the type of analyses we chose.
+
 ![image](https://user-images.githubusercontent.com/89169474/145312275-039029cb-da52-47d6-80c0-c1f5336696a6.png)
 
+After exploring correlation, we also looked at a scatterplot of the different counties, with their Social Vulnerability Index (SVI), and the Estimated Hesitant value. As this plot was interactive, it will only be found within the code. Following this, we began looking at relationships of Estimated Hesitant with other variables.
 
-# Results
-Visualizations
-ML Model Outputs
-ML Demo Video
-Linear Model with use of test data (training/test split)
-PowerPoint Deck
+![image](https://user-images.githubusercontent.com/89169474/145312557-7939279e-0fd0-4a1e-90c7-a94bf7ef3738.png)
 
-# Testing
-Data will be split into two groups (66% training, 34% test)
-Models and variable selection will be done on training set
-Model validation done on test set
-Will use unit tests for python code
-OUTCOME
-Goal is to combine data to effectively analyze populations, groups, and areas that may be predisposed to a higher level of vaccine hesitancy.
-This could be used by governments to focus education on the groups to elaborate on understanding of the vaccine, and alleviate any discomfort/hesitancy towards the vaccine
-Summarize your plan and explain how your findings could be used by others (if applicable).
+![image](https://user-images.githubusercontent.com/89169474/145312576-68119655-3a96-4447-aaca-c56624946e1a.png)
+
+![image](https://user-images.githubusercontent.com/89169474/145312588-048a059f-e6e4-43ab-9b01-d74ff9fad1e9.png)
+
+# Regression Analyses
+
+For proof of concept, we then did a single Linear Regression with the Percent GOP (per_gop) column, and Estimated Hesitant.
+```
+#Train Regression Model On Full Data Set
+
+x=np.array(final_df['per_gop'])
+y=np.array(final_df['Estimated hesitant'])
+x=np.nan_to_num(x)
+y=np.nan_to_num(y)
+
+x= x.reshape(-1, 1)
+y= y.reshape(-1, 1)
+
+model = LinearRegression(fit_intercept =True).fit(x, y)
+model.score(x, y)
+
+#Plot Residuals
+from yellowbrick.regressor import ResidualsPlot
+
+visualizer = ResidualsPlot(model)
+visualizer.fit(x, y)
+```
+![image](https://user-images.githubusercontent.com/89169474/145312715-993f7b6b-fb02-4274-866e-2f97faea43d8.png)
+
+Given our model score was relatively low and residuals did not seem evenly dispersed around 0, we then went about performing a transformation.
+
+```
+#Transformation
+from scipy import stats
+
+prediction = model.predict(x)
+residual = np.array(y - prediction)
+
+tdata = stats.boxcox(y.flatten())[0]
+plt.figure(figsize = (8, 8))
+sns.distplot(tdata)
+plt.show()
+```
+
+```
+## Lambda value of -1 suggests transformation y_star=1/y
+y_star = 1/y
+model2 = LinearRegression(fit_intercept =True).fit(x, y_star)
+model2.score(x, y_star)
+```
+
+# Random Forest
+With our Linear Regression done, we then went about using a common Machine Learning algorithm to analyze the data further. Given the high level of correlation between predictors, we wanted to use a method that would incorporate this into the model, rather than having it detract from the model. Random Forest allows for correlation between predictors, so it seemed to fit perfect for the task.
+
+To start, we split our data 70% for training, and 30% for testing.
+
+```
+predictor_cols=[6, 10, 11,12,13,14,15,16,24,25]
+
+X = final_df_processed[np.array(final_df_processed.columns)[predictor_cols]]
+y = final_df_processed['Estimated hesitant']
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3) # 70% training and 30% test
+```
+
+Next, we trained our Random Forest model on the training dataset.
+
+```
+# Instantiate model
+rf = RandomForestRegressor()
+
+# Train the model on training data
+rf.fit(X_train, y_train);
+
+#Observe predictions
+y_pred=rf.predict(X_test)
+
+# Model Accuracy, how often is the classifier correct?
+print('Mean Absolute Error:', metrics.mean_absolute_error(y_test, y_pred))
+print('Mean Squared Error:', metrics.mean_squared_error(y_test, y_pred))
+print('Root Mean Squared Error:', np.sqrt(metrics.mean_squared_error(y_test, y_pred)))
+```
+
+After, we looked at Feature Importance to identify variables of importance. Of note, Percent GOP, Percent non-Hispanic Black, Percent non-Hispanic American Indian/Alaska Native, and percent Hispanic were at the top.
+
+```
+#Access Random Forest Feature Importance
+
+feature_importance = rf.feature_importances_
+col_names = np.array(final_df.columns)[predictor_cols]
+
+feat_importance_matrix = pd.DataFrame(
+    {'Column Names': col_names,
+     'Feature Importance': feature_importance
+    })
+
+feat_importance_matrix.sort_values(['Feature Importance'], ascending=False)
+```
 
 
-# Project Management Plan:
+Finally, we tested the accuracy of our model on the test set by looking at how many predictions came with 0.1, 0.05, and 0.01 of the true value.
 
-- Task #1: Set up GitHub repository (Emma)
-- Task #2: Acquire and load Data (Charlie)
-- Task #3: Join Data (Aishwarya & Chris)
-- Task #4: Plan Analyses (Group)
+```
+y_acc = y_test - y_pred
+y_acc
+
+a1 = 0
+a05 = 0
+a01 = 0
+for i in y_acc:
+  if abs(i) <= 0.1:
+    a1 = a1+1
+  if abs(i) <= 0.05:
+    a05 = a05+1
+  if abs(i) <= 0.01:
+    a01 = a01+1
+
+acc1 = a1/len(y_acc)
+acc05 = a05/len(y_acc)
+acc01 = a01/len(y_acc)
+
+print('% of Predictions within 0.1 of true value: ' + str(round(acc1,3)))
+print('% of Predictions within 0.05 of true value: ' + str(round(acc05, 3)))
+print('% of Predictions within 0.01 of true value: ' + str(round(acc01, 3)))
+```
+
+% of Predictions within 0.1 of true value: 0.988
+% of Predictions within 0.05 of true value: 0.862
+% of Predictions within 0.01 of true value: 0.273
+
+
+# Conclusions
+
+In the end, we were able to put together a highly performing model that was above 85% accurate at getting within 0.05 of the true value for predictions (Estimated Hesitant has a range of 0.0269 - 0.267).
