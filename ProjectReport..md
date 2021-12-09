@@ -70,7 +70,7 @@ _Whole group:_
 - Write-up
 
 # Data Processing
-```
+```{python}
 def convert(data):
     number = preprocessing.LabelEncoder()
     float_cols_vec = [3,4,5,6,8,10,11,12,13,14,15,16,22,23,24,25]
