@@ -44,20 +44,58 @@ Visualizations
 - Write-up
 
 **Team Roles:**
+
 _Charlie_
 - Submitter
 - Git Leader
+
+
 _Aishwarya_
--Editor/Compiler
+- Editor/Compiler
+
+
 _Emma_
 - Model Validation
+
+
 _Christopher_
--Pre-Processing 
+- Pre-Processing 
+
+
 _Whole group:_
-Combining data
--Initial Analyses
--Model Creation
--Write-up
+
+- Combining data
+- Initial Analyses
+- Model Creation
+- Write-up
+
+# Data Processing
+```
+def convert(data):
+    number = preprocessing.LabelEncoder()
+    float_cols_vec = [3,4,5,6,8,10,11,12,13,14,15,16,22,23,24,25]
+    float_cols = np.array(final_df.columns)[float_cols_vec]
+    for i in float_cols:
+      data[i] = pd.to_numeric(data[i],errors='coerce')
+    data=data.fillna(0)
+    return data
+
+final_df_processed=convert(final_df)
+
+#Set matrix with desired columns
+col_names=[3, 4, 5, 10, 11, 13, 14, 24, 25, 32]
+np.array(final_df.columns)[col_names]
+
+#Aggregate data by state
+by_state= final_df.groupby(['State'])[np.array(final_df.columns)[col_names]].mean().reset_index()
+Est_hes_corr = by_state.corr().iloc[0]
+by_state['political_affiliation'] = np.where(by_state['per_dem'] > by_state['per_gop'], "Democrat", "Republican")
+by_state.head()
+```
+
+# Intial Analyses
+
+
 
 # Results
 Visualizations
