@@ -31,17 +31,22 @@ Using ML techniques, identify variables of interest. Then create a model to pred
 Visualizations
 
 **Team Roles:**
+\
 _Charlie_
 - Submitter
 - Git Leader
+\
 _Aishwarya_
--Editor/Compiler
+- Editor/Compiler
+\
 _Emma_
 - Model Validation
+\
 _Christopher_
--Pre-Processing 
+- Pre-Processing 
+\
 _Whole group:_
 Combining data
--Initial Analyses
--Model Creation
--Write-up
+- Initial Analyses
+- Model Creation
+- Write-up
